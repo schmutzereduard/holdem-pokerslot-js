@@ -1,0 +1,51 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 20px;
+    background-color: #f4f4f4;
+}
+
+/* Flex container for paytable and card sections */
+#main-container {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    padding: 20px;
+}
+
+/* Paytable styling */
+#paytable-container {
+    flex: 1;
+    margin-right: 20px;
+    border-right: 1px solid #ccc;
+    padding-right: 20px;
+}
+
+/* Cards section: player cards above drawn cards */
+#cards-section {
+    flex: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* Player cards container */
+#player-cards-container {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+/* Drawn cards container */
+#cards-container {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+/* Image styling for cards */
+img {
+    margin: 10px;
+    width: 100px;
+    height: auto;
+}
