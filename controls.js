@@ -47,9 +47,10 @@ const controls = () => {
         } else if (betValue > funds) {
             alert("Inssuficient funds!");
         } else {
-            bet += betValue;
+            bet = betValue;
+            console.log(betValue);
             funds -= bet;
-            document.getElementById("funds-value").textContent = funds + "$";
+            console.log(funds);
             start();
         }
     });
@@ -60,13 +61,13 @@ const controls = () => {
     document.getElementById("controls-container").appendChild(changeButton);
     changeButton.addEventListener("click", cardActions.changeCards);
 
-    const finishButton = document.createElement("button");
-    finishButton.setAttribute("id", "finish-button");
-    finishButton.textContent = "End game";
-    document.getElementById("controls-container").appendChild(finishButton);
-    finishButton.addEventListener("click", () => {
+    const endButton = document.createElement("button");
+    endButton.setAttribute("id", "end-button");
+    endButton.textContent = "End game";
+    document.getElementById("controls-container").appendChild(endButton);
+    endButton.addEventListener("click", () => {
 
-    
+        end();
     });
 
     updateControls();
@@ -75,6 +76,7 @@ const controls = () => {
 async function start() {
 
     gameStarted = true;
+    document.getElementById("funds-value").textContent = funds + "$";
     updateControls();
     await api.shuffleDeck();
     cardActions.dealPlayerCards();
@@ -86,9 +88,14 @@ async function end() {
     gameStarted = false;
     updateControls();
     await api.shuffleDeck();
+    document.getElementById("game-cards-container").innerHTML = "";
+    document.getElementById("player-cards-container").innerHTML = "";
 }
 
 function updateControls() {
+
+    const betValue = document.getElementById("bet-value");
+    betValue.disabled = gameStarted ? true : false;
 
     const betButton = document.getElementById("bet-button");
     betButton.style.visibility = gameStarted ? "hidden" : "visible";
@@ -96,7 +103,7 @@ function updateControls() {
     const changeButton = document.getElementById("change-button");
     changeButton.style.visibility = gameStarted ? "visible" : "hidden";
 
-    const finishButton = document.getElementById(("finish-button"));
+    const finishButton = document.getElementById(("end-button"));
     finishButton.style.visibility = gameStarted ? "visible" : "hidden";
 }
 

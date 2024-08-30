@@ -37,7 +37,7 @@ export async function changeCards() {
             const cardIndex = gameCards["cards"].findIndex(c => c === card);
             gameCards["cards"][cardIndex] = cardsReplacement.cards[index];
             gameCards["cards"][cardIndex].isSelected = false;
-            document.getElementById("cards-container").innerHTML = "";
+            document.getElementById("game-cards-container").innerHTML = "";
             displayCards();
         });
     }
@@ -50,7 +50,7 @@ function displayCards() {
         card.isSelected = false;
         const cardElement = document.createElement("img");
         cardElement.src = card["image"];
-        document.getElementById("cards-container").appendChild(cardElement);
+        document.getElementById("game-cards-container").appendChild(cardElement);
         cardElement.addEventListener("click", (event) => {
             if (cardsChangeCounter < MAX_CARDS_CHANGE) {
                 if (event.target.src === card["image"] && selectedCards < MAX_CARDS_TO_CHANGE) {

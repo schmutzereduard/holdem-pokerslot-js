@@ -37,7 +37,7 @@ body {
 }
 
 /* Drawn cards container */
-#cards-container {
+#game-cards-container {
     display: flex;
     justify-content: center;
     flex-wrap: wrap;
