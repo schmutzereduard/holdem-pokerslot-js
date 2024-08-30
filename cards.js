@@ -1,11 +1,7 @@
 import * as api from "./api.js";
+import { MAX_CARDS_CHANGE, MAX_CARDS_TO_CHANGE, CARD_BACK_URL } from "./constants.js";
 
-const CARD_BACK = "https://www.deckofcardsapi.com/static/img/back.png";
-const CHANGE_CARDS_MAX = 2;
-const MAX_SELECTED_CARDS = 3;
-
-let changeCardsCounter = 0;
-
+let cardsChangeCounter = 0;
 let gameCards;
 let playerCards;
 let selectedCards;
@@ -29,25 +25,21 @@ export async function dealPlayerCards() {
 
 export async function changeCards() {
 
-    if (gameCards && changeCardsCounter < CHANGE_CARDS_MAX) {
+    const selectedCards = gameCards["cards"].filter(card => card.isSelected);
+    const cardsToDraw = selectedCards.length;
 
-        changeCardsCounter += 1;
+    if (cardsToDraw > 0 && cardsChangeCounter < MAX_CARDS_CHANGE) {
 
-        const selectedCards = gameCards["cards"].filter(card => card.isSelected);
-        const cardsToDraw = selectedCards.length;
+        cardsChangeCounter += 1;
+        let cardsReplacement = await api.drawCards(cardsToDraw);
 
-        if (cardsToDraw > 0) {
-
-            let cardsReplacement = await api.drawCards(cardsToDraw);
-
-            selectedCards.forEach((card, index) => {
-                const cardIndex = gameCards["cards"].findIndex(c => c === card);
-                gameCards["cards"][cardIndex] = cardsReplacement.cards[index];
-                gameCards["cards"][cardIndex].isSelected = false;
-                document.getElementById("cards-container").innerHTML = "";
-                displayCards();
-            });
-        }
+        selectedCards.forEach((card, index) => {
+            const cardIndex = gameCards["cards"].findIndex(c => c === card);
+            gameCards["cards"][cardIndex] = cardsReplacement.cards[index];
+            gameCards["cards"][cardIndex].isSelected = false;
+            document.getElementById("cards-container").innerHTML = "";
+            displayCards();
+        });
     }
 }
 
@@ -60,12 +52,12 @@ function displayCards() {
         cardElement.src = card["image"];
         document.getElementById("cards-container").appendChild(cardElement);
         cardElement.addEventListener("click", (event) => {
-            if (changeCardsCounter < CHANGE_CARDS_MAX) {
-                if (event.target.src === card["image"] && selectedCards < MAX_SELECTED_CARDS) {
-                    event.target.src = CARD_BACK;
+            if (cardsChangeCounter < MAX_CARDS_CHANGE) {
+                if (event.target.src === card["image"] && selectedCards < MAX_CARDS_TO_CHANGE) {
+                    event.target.src = CARD_BACK_URL;
                     card.isSelected = true;
                     selectedCards += 1;
-                } else if (event.target.src === CARD_BACK) {
+                } else if (event.target.src === CARD_BACK_URL) {
                     event.target.src = card["image"];
                     card.isSelected = false;
                     selectedCards -= 1;

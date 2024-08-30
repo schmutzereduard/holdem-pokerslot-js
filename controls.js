@@ -2,7 +2,6 @@ import * as cardActions from './cards.js';
 import * as api from './api.js';
 
 let gameStarted = false;
-let deck;
 let funds = 50;
 let bet = 0;
 
@@ -32,20 +31,15 @@ const controls = () => {
     form.appendChild(betInput);
 
     const betButton = document.createElement("button");
+    betButton.setAttribute("id", "bet-button");
     betButton.textContent = "Bet";
     form.appendChild(betButton);
 
     form.appendChild(document.createElement("br"));
 
-    const button = document.createElement("button");
-    button.textContent = "Change cards";
-    document.getElementById("controls-container").appendChild(button);
-    button.addEventListener("click", cardActions.changeCards);
     form.addEventListener("submit", (event) => {
 
         event.preventDefault();
-        if (gameStarted)
-            return;
 
         let betValue = event.target.elements["bet-value"].value;
         if (!betValue) {
@@ -59,15 +53,51 @@ const controls = () => {
             start();
         }
     });
+
+    const changeButton = document.createElement("button");
+    changeButton.setAttribute("id", "change-button");
+    changeButton.textContent = "Change cards";
+    document.getElementById("controls-container").appendChild(changeButton);
+    changeButton.addEventListener("click", cardActions.changeCards);
+
+    const finishButton = document.createElement("button");
+    finishButton.setAttribute("id", "finish-button");
+    finishButton.textContent = "End game";
+    document.getElementById("controls-container").appendChild(finishButton);
+    finishButton.addEventListener("click", () => {
+
+    
+    });
+
+    updateControls();
 }
 
 async function start() {
 
     gameStarted = true;
-    deck = await api.shuffleDeck();
+    updateControls();
+    await api.shuffleDeck();
     cardActions.dealPlayerCards();
     cardActions.dealGameCards();
-    cardActions.changeCards();
+}
+
+async function end() {
+
+    gameStarted = false;
+    updateControls();
+    await api.shuffleDeck();
+}
+
+function updateControls() {
+
+    const betButton = document.getElementById("bet-button");
+    betButton.style.visibility = gameStarted ? "hidden" : "visible";
+
+    const changeButton = document.getElementById("change-button");
+    changeButton.style.visibility = gameStarted ? "visible" : "hidden";
+
+    const finishButton = document.getElementById(("finish-button"));
+    finishButton.style.visibility = gameStarted ? "visible" : "hidden";
 }
 
 export default controls;

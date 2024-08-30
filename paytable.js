@@ -1,4 +1,4 @@
-import hands from "./hands.js";
+import { HANDS, MULTIPLIER } from "./constants.js";
 
 const paytable = () => {
 
@@ -22,7 +22,7 @@ const paytable = () => {
     pay.textContent = "Pay";
     headers.appendChild(pay);
 
-    hands.forEach((hand) => {
+    HANDS.forEach((hand) => {
 
         const row = document.createElement("tr");
         table.appendChild(row);
@@ -32,7 +32,7 @@ const paytable = () => {
         row.appendChild(handData);
 
         const handPay = document.createElement("td");
-        handPay.textContent = hand.value * 5 + "$";
+        handPay.textContent = hand.value * MULTIPLIER + "$";
         row.appendChild(handPay);
     });
 }
