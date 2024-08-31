@@ -1,6 +1,7 @@
 import * as cardActions from './cards.js';
 import * as api from './api.js';
 import { MULTIPLIER } from './constants.js';
+import { addHistory } from './history.js';
 
 let gameStarted = false;
 let funds = 50;
@@ -104,10 +105,11 @@ async function end() {
     document.getElementById("player-cards-container").innerHTML = "";
     document.getElementById("round-number").textContent = "";
     const hand = cardActions.checkCards();
-    alert(hand.name);
     const won = MULTIPLIER * hand.value * bet;
     funds += won;
     document.getElementById("funds-value").textContent = funds + "$";
+
+    addHistory(`Player won ${won}$ with a ${hand.name} hand`);
 }
 
 function updateControls() {
