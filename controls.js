@@ -1,5 +1,6 @@
 import * as cardActions from './cards.js';
 import * as api from './api.js';
+import { MULTIPLIER } from './constants.js';
 
 let gameStarted = false;
 let funds = 50;
@@ -78,10 +79,7 @@ const controls = () => {
     endButton.setAttribute("id", "end-button");
     endButton.textContent = "End game";
     document.getElementById("controls-container").appendChild(endButton);
-    endButton.addEventListener("click", () => {
-
-        end();
-    });
+    endButton.addEventListener("click", () => end());
 
     updateControls();
 }
@@ -105,6 +103,11 @@ async function end() {
     document.getElementById("game-cards-container").innerHTML = "";
     document.getElementById("player-cards-container").innerHTML = "";
     document.getElementById("round-number").textContent = "";
+    const hand = cardActions.checkCards();
+    alert(hand.name);
+    const won = MULTIPLIER * hand.value * bet;
+    funds += won;
+    document.getElementById("funds-value").textContent = funds + "$";
 }
 
 function updateControls() {
