@@ -8,6 +8,7 @@ let selectedCards;
 
 export async function dealGameCards() {
 
+    cardsChangeCounter = 0;
     gameCards = await api.drawCards(5);
     displayCards();
 }
@@ -40,7 +41,11 @@ export async function changeCards() {
             document.getElementById("game-cards-container").innerHTML = "";
             displayCards();
         });
+
+        return true;
     }
+
+    return false;
 }
 
 function displayCards() {

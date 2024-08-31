@@ -4,11 +4,21 @@ import * as api from './api.js';
 let gameStarted = false;
 let funds = 50;
 let bet = 0;
+let round = 0;
 
 const controls = () => {
 
     const form = document.createElement("form");
     document.getElementById("controls-container").appendChild(form);
+
+    const controlsHeader = document.createElement("h2");
+    controlsHeader.textContent = "Controls";
+    form.appendChild(controlsHeader);
+
+    const roundHeader = document.createElement("h2");
+    roundHeader.setAttribute("id", "round-number");
+    const cardsSection = document.getElementById("cards-section");
+    cardsSection.insertBefore(roundHeader, cardsSection.firstChild);
 
     const fundsLabel = document.createElement("label");
     fundsLabel.textContent = "Funds: ";
@@ -48,9 +58,7 @@ const controls = () => {
             alert("Inssuficient funds!");
         } else {
             bet = betValue;
-            console.log(betValue);
             funds -= bet;
-            console.log(funds);
             start();
         }
     });
@@ -59,7 +67,12 @@ const controls = () => {
     changeButton.setAttribute("id", "change-button");
     changeButton.textContent = "Change cards";
     document.getElementById("controls-container").appendChild(changeButton);
-    changeButton.addEventListener("click", cardActions.changeCards);
+    changeButton.addEventListener("click", async () => {
+        const anyCards = await cardActions.changeCards();
+        if (anyCards)
+            round++;
+        updateControls();
+    });
 
     const endButton = document.createElement("button");
     endButton.setAttribute("id", "end-button");
@@ -76,7 +89,7 @@ const controls = () => {
 async function start() {
 
     gameStarted = true;
-    document.getElementById("funds-value").textContent = funds + "$";
+    round++;
     updateControls();
     await api.shuffleDeck();
     cardActions.dealPlayerCards();
@@ -86,13 +99,20 @@ async function start() {
 async function end() {
 
     gameStarted = false;
+    round = 0;
     updateControls();
     await api.shuffleDeck();
     document.getElementById("game-cards-container").innerHTML = "";
     document.getElementById("player-cards-container").innerHTML = "";
+    document.getElementById("round-number").textContent = "";
 }
 
 function updateControls() {
+
+    if (gameStarted) {
+        document.getElementById("funds-value").textContent = funds + "$";
+        document.getElementById("round-number").textContent = "Round " + round;
+    }
 
     const betValue = document.getElementById("bet-value");
     betValue.disabled = gameStarted ? true : false;
@@ -105,6 +125,9 @@ function updateControls() {
 
     const finishButton = document.getElementById(("end-button"));
     finishButton.style.visibility = gameStarted ? "visible" : "hidden";
+
+    if (round === 3)
+        end();
 }
 
 export default controls;
