@@ -173,9 +173,22 @@ function isFlush(suitCount) {
 }
 
 function isStraight(sortedRanks) {
+    // Check for regular straight
     for (let i = 0; i <= sortedRanks.length - 5; i++) {
-        if (sortedRanks[i + 4] - sortedRanks[i] === 4) return true;
+        if (
+            sortedRanks[i + 4] - sortedRanks[i] === 4 &&
+            new Set(sortedRanks.slice(i, i + 5)).size === 5
+        ) {
+            return true;
+        }
     }
+
+    // Check for straight with low Ace (A-2-3-4-5)
+    const lowAceStraight = [14, 2, 3, 4, 5];
+    if (lowAceStraight.every(rank => sortedRanks.includes(rank))) {
+        return true;
+    }
+
     return false;
 }
 
