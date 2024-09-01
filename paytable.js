@@ -1,4 +1,4 @@
-import { HANDS, MULTIPLIER } from "./constants.js";
+import { HANDS } from "./constants.js";
 
 const paytable = () => {
 
@@ -32,9 +32,18 @@ const paytable = () => {
         row.appendChild(handData);
 
         const handPay = document.createElement("td");
-        handPay.textContent = hand.value * MULTIPLIER + "$";
+        handPay.setAttribute("id", hand.name);
         row.appendChild(handPay);
     });
+}
+
+export function updatePaytable(betValue) {
+
+    for (let hand of HANDS) {
+
+        const handCell = document.getElementById(hand.name);
+        handCell.textContent = betValue * hand.multiplier + "$";
+    }
 }
 
 export default paytable;
