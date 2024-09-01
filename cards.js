@@ -1,6 +1,6 @@
 import * as api from "./api.js";
 import { MAX_CARDS_CHANGE, MAX_CARDS_TO_CHANGE, CARD_BACK_URL } from "./constants.js";
-import { HIGH_CARD, ONE_PAIR, TWO_PAIR, THREE_OF_A_KIND, STRAIGHT, FLUSH, FULL_HOUSE, FOUR_OF_A_KIND, ROYAL_FLUSH } from "./constants.js";
+import { HIGH_CARD, ONE_PAIR, TWO_PAIR, THREE_OF_A_KIND, STRAIGHT, FLUSH, FULL_HOUSE, FOUR_OF_A_KIND, STRAIGHT_FLUSH, ROYAL_FLUSH } from "./constants.js";
 
 let cardsChangeCounter = 0;
 let gameCards;
@@ -11,7 +11,7 @@ export async function dealGameCards() {
 
     cardsChangeCounter = 0;
     gameCards = await api.drawCards(5);
-    displayCards();
+    displayCards("game-cards-container");
 }
 
 export async function dealPlayerCards() {
@@ -40,7 +40,7 @@ export async function changeCards() {
             gameCards["cards"][cardIndex] = cardsReplacement.cards[index];
             gameCards["cards"][cardIndex].isSelected = false;
             document.getElementById("game-cards-container").innerHTML = "";
-            displayCards();
+            displayCards("game-cards-container");
         });
 
         return true;
@@ -49,27 +49,30 @@ export async function changeCards() {
     return false;
 }
 
-function displayCards() {
+function displayCards(container) {
 
     selectedCards = 0;
-    gameCards["cards"].forEach(card => {
+    let cardsToDisplay = "game-cards-container" === container ? gameCards["cards"] : [...gameCards["cards"], ...playerCards["cards"]];
+    cardsToDisplay.forEach(card => {
         card.isSelected = false;
         const cardElement = document.createElement("img");
         cardElement.src = card["image"];
-        document.getElementById("game-cards-container").appendChild(cardElement);
-        cardElement.addEventListener("click", (event) => {
-            if (cardsChangeCounter < MAX_CARDS_CHANGE) {
-                if (event.target.src === card["image"] && selectedCards < MAX_CARDS_TO_CHANGE) {
-                    event.target.src = CARD_BACK_URL;
-                    card.isSelected = true;
-                    selectedCards += 1;
-                } else if (event.target.src === CARD_BACK_URL) {
-                    event.target.src = card["image"];
-                    card.isSelected = false;
-                    selectedCards -= 1;
+        document.getElementById(container).appendChild(cardElement);
+        if ("game-cards-container" === container) {
+            cardElement.addEventListener("click", (event) => {
+                if (cardsChangeCounter < MAX_CARDS_CHANGE) {
+                    if (event.target.src === card["image"] && selectedCards < MAX_CARDS_TO_CHANGE) {
+                        event.target.src = CARD_BACK_URL;
+                        card.isSelected = true;
+                        selectedCards += 1;
+                    } else if (event.target.src === CARD_BACK_URL) {
+                        event.target.src = card["image"];
+                        card.isSelected = false;
+                        selectedCards -= 1;
+                    }
                 }
-            }
-        });
+            });
+        }
     });
 }
 
@@ -106,6 +109,12 @@ export function checkCards() {
 
     // Sort ranks for easier straight detection
     const sortedRanks = ranks.map(rank => rankToValue(rank)).sort((a, b) => a - b);
+
+    const lastGameCardsContainer = document.getElementById("last-cards-container");
+    while (lastGameCardsContainer.children.length > 1) {
+        lastGameCardsContainer.removeChild(lastGameCardsContainer.lastChild);
+    }
+    displayCards("last-cards-container");
 
     // Checking for specific hands starting from highest to lowest
     if (isRoyalFlush(sortedRanks, suitCount)) return ROYAL_FLUSH;

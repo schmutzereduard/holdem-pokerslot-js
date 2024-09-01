@@ -22,8 +22,8 @@ async function startGame() {
     round++;
     updateControls();
     await api.shuffleDeck();
-    cardActions.dealPlayerCards();
-    cardActions.dealGameCards();
+    await cardActions.dealPlayerCards();
+    await cardActions.dealGameCards();
 }
 
 async function endGame() {
